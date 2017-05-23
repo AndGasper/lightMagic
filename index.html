@@ -8,34 +8,10 @@
         <link rel="stylesheet" href="styles/leap.css">
         <script src="js/index.js"></script>
         <script src="js/leap.js"></script>
-    </head>
-    <body>
-        <div id="app" class="show-hands">
-            <button id="showHands">Show Hands</button>
-            <button id="hideHands">hide Hands</button>
-            <div id="scene">
-                <div id="cube" class="cube">
-                    <div class="face tp"></div>
-                    <div class="face lt"></div>
-                    <div class="face rt"></div>
-                    <div class="face ft"></div>
-                    <div class="face bk"></div>
-                </div>
-                <div id="finger" class="cube finger">
-                    <div class="face tp"></div>
-                    <div class="face lt"></div>
-                    <div class="face rt"></div>
-                    <div class="face ft"></div>
-                    <div class="face bk"></div>
-                </div>
-                <div id="sphere" class="cube sphere">
-                    <div class="face tp"></div>
-                    <div class="face lt"></div>
-                    <div class="face rt"></div>
-                    <div class="face ft"></div>
-                    <div class="face bk"></div>
-                </div>
-            </div>
-        </div>
-    </body>
-</html>
+      </head>
+      <body>
+      <button onclick="controller.disconnect();">Disconnect</button>
+      <button onclick="controller.connect();">Connect</button>
+      <div class='box' id="box"></div>
+      </body>
+    </html>
