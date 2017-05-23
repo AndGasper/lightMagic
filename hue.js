@@ -77,8 +77,16 @@ let upperThreshold = 50;
 
 var controller = Leap.loop(function (frame) {
     if (frame.hands.length > 0) {
-        var hand = frame.hands[0];
-        var isFist = checkFist(hand);
+        console.log('frame hands',frame.hands[0].type);
+        if(frame.hands[0].type === "left"){
+            var hand = frame.hands[0];
+            var isFist = checkFist(hand);
+
+        }else{
+            console.log("right hand");
+            return false
+        }
+        // var hand = frame.hands.type;
     }
 });
 
@@ -141,7 +149,8 @@ function switchCooldown() {
         setTimeout(function () {
             cooldown = false;
         }, cooldownTimer);
-        // False value once reached upperThreshold will be passed into toggleAllLightsOffOn        
+        // False value once reached upperThreshold will be passed into toggleAllLightsOffOn
+        //temp
         toggleAllLightsOffOn(false);
     } else if (lightSwitchThreshold == upperThreshold) {
         console.log("We have returned true, TURN THAT SHIT ON!");
@@ -149,6 +158,7 @@ function switchCooldown() {
             cooldown = false;
         }, cooldownTimer);
         // True value once reached upperThreshold will be passed into toggleAllLightsOffOn
+        //temp
         toggleAllLightsOffOn(true);
     }
 
