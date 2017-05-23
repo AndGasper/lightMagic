@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $("#hueGET").on('click', callLights);
+    $("#hueGET").on('click', toggleLightsOffOn);
 });
 // constants for base url are pulled from hue_config.js
 
@@ -23,15 +23,18 @@ function callLights() {
     });
 }
 
-function toggleLightsOff(lightNumber) {
-    const BASE_URL = `http://${bridgeIPAddress}/api/${hueUsername}/lights/${lightNumber}/state`;
+function toggleLightsOffOn() {
+    const BASE_URL = `http://${bridgeIPAddress}/api/${hueUsername}/lights/11/state`;
     const state = $("#onOffCheckbox:checked");
     console.log("toggleLightsOff state", state);
+    let lightState = {"on": "true"};
+
+    console.log("lightState", lightState);
     $.ajax({
-        url: `${BASE_URL}/lights/${lightNumber}/state`,
+        url: `${BASE_URL}`,
         dataType: "JSON",
         method: "PUT",
-        data: {"on": `${state}`},
+        data: '{"on": true}',
         success: function(response) {
             console.log("toggleLights success response", response);
         },
