@@ -19,7 +19,6 @@ function callLights() {
         error: function(response) {
             console.log("callLights error", response);
         }
-
     });
 }
 // Is this light off or on?
@@ -43,28 +42,8 @@ function getLightState() {
             console.log("getLightState response error", response);
         }
     })
-
-
 }
 
-function toggleLightsOffOn() {
-    const BASE_URL = `http://${bridgeIPAddress}/api/${hueUsername}/lights/11/state`;
-    let lightState = {"on": true};
-
-    console.log("lightState", lightState);
-    $.ajax({
-        url: `${BASE_URL}`,
-        dataType: "JSON",
-        method: "PUT",
-        data: JSON.stringify(lightState),
-        success: function(response) {
-            console.log("toggleLights success response", response);
-        },
-        error: function(response) {
-            console.log("toggleLights error response", response);
-        }
-    })
-}
 // Convert RGB color values to Hue, Saturation and brightness, function returns an object
 function getHSB(r,g,b) {
     let HSB = {
@@ -109,4 +88,13 @@ function getHSB(r,g,b) {
 
 // console.log("getHue", getHue(230,255,211));
 console.log("getHue(222,250,100)", getHSB(255,250,100));
+//RGB and their HSL Values
+    // RGB = 255, 250, 100
+    // HSL = 58, 100.0, 69.6 - Yellow
+    // RGB = 255, 100, 255
+    // HSL = 300, 100, 69.6 - Pink
+    // RGB = 100, 255, 255
+    // HSL = 180, 100, 69.6 - Cyan
+
+
 
