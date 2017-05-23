@@ -97,4 +97,30 @@ console.log("getHue(222,250,100)", getHSB(255,250,100));
     // HSL = 180, 100, 69.6 - Cyan
 
 
+// color is an object with r,g,b
+function changeColor(lightNumber, color) {
+    const BASE_URL_LIGHTS = `http://${bridgeIPAddress}/api/${hueUsername}/lights`;
+    const {r, g, b} = color; // pull off r, g, and b from color
+    const {hue, saturation, brightness} =  getHSB(r,g, b); // pull off hue saturation and brightness from the HSB return value
+
+    let hueAdjusted = parseInt((hue/365)*65535);
+    let saturationAdjusted = parseInt(saturation*254);
+    let brightnessAdjusted = parseInt(brightness*254);
+
+    $.ajax({
+        url: `${BASE_URL_LIGHTS}/${lightNumber}/state`,
+        method: "PUT",
+        dataType: "JSON",
+        data: JSON.stringify({"hue": hueAdjusted, "sat": saturationAdjusted, "bri": brightnessAdjusted}),
+        success: (response) => {
+            console.log("changeColor success", response);
+        },
+        error: (response) => {
+            console.log("changeColor error", response);
+        }
+    });
+
+}
+
+
 
