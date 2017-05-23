@@ -2,6 +2,20 @@ $(document).ready(function () {
     $("#hueGET").on('click', toggleLightsOffOn);
     $("#allLights").on('click', toggleAllLightsOffOn);
 });
+//color square disconnect and connect
+var state = 'play';
+window.onkeypress = function(e) {
+    if (e.charCode == 32) { //spacebar
+        if (state == 'play') {
+            state = 'pausing';
+        }else{
+            state = 'play';
+        }
+    }
+};
+var haveLoggedFrame = false;
+
+
 // constants for base url are pulled from hue_config.js
 
 function callLights() {
@@ -84,12 +98,22 @@ var controller = Leap.loop(function (frame) {
 
         }else{
             console.log("right hand");
-            return false
+            var x = Math.floor((frame.hands[0].direction[0] + 1) * 128);
+            var z = Math.floor ((frame.hands[0].direction[1] + 1) *  128);
+            var y = Math.floor((frame.hands[0].direction[2] + 1) *  128);
+            var color = 'rgb(' + x + "," + z + "," + y + ')';
+            sendColor(color);
+            if (haveLoggedFrame == false && frame.hands[0]){
+                haveLoggedFrame = true;
+            }
+            // return false
         }
         // var hand = frame.hands.type;
     }
 });
-
+function sendColor(color){
+    document.getElementById('box').style.backgroundColor = color;
+}
 function getExtendedFingers(hand) {
     var f = 0;
     for (var i = 0; i < hand.fingers.length; i++) {
