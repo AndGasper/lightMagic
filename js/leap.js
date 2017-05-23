@@ -11,11 +11,12 @@ window.onkeypress = function(e) {
 var haveLoggedFrame = false;
 var controller = new Leap.Controller({enableGestures: true});
 controller.loop(function(frame) {
-  if (state == 'paused') return;
+  if (state == 'paused'){
+      return
+  }
   if (state == 'pausing') {
     state = 'paused';
   }else{
-      //  && frame.hands.type === 'right'
     if(frame.hands[0] && frame.hands[0].type === 'right'){
         var x = Math.floor((frame.hands[0].direction[0] + 1) * 128);
         var z = Math.floor ((frame.hands[0].direction[1] + 1) *  128);
