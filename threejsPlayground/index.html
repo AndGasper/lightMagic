@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../js/three.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+<script>
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 10000 );
+
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
+    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+
+    var cubeA = new THREE.Mesh( geometry, material );
+    cubeA.position.set( 6,-4,0 );
+
+    var cubeB = new THREE.Mesh( geometry, material );
+    cubeB.position.set( 0,-4,0 );
+
+    var cubeC = new THREE.Mesh( geometry, material );
+    cubeC.position.set( -6,-4,0 );
+
+    var cubeD = new THREE.Mesh( geometry, material );
+    cubeD.position.set( 12,-4,0 );
+
+    var cubeE = new THREE.Mesh( geometry, material );
+    cubeE.position.set( -12,-4,0 );
+
+
+    //create a group and add the two cubes
+    //These cubes can now be rotated / scaled etc as a group
+    var group = new THREE.Group();
+    group.add( cubeA );
+    group.add( cubeB );
+    group.add( cubeC );
+    group.add( cubeD );
+    group.add( cubeE );
+
+    scene.add( group );
+
+    camera.position.z = 20;
+    function render() {
+        requestAnimationFrame( render );
+        cubeA.rotation.x += .01;
+        cubeA.rotation.y += .01;
+        cubeB.rotation.x += .01;
+        cubeB.rotation.y += .01;
+        cubeC.rotation.x += .01;
+        cubeC.rotation.y += .01;
+        cubeD.rotation.x += .01;
+        cubeD.rotation.y += .01;
+        cubeE.rotation.x += .01;
+        cubeE.rotation.y += .01;
+        renderer.render( scene, camera );
+    }
+    render();
+</script>
+</body>
+</html>
