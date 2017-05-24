@@ -27,16 +27,16 @@
 
         // # This will show pink dots at the raw position of every leap joint on the last hand object created
         // # they will be slightly offset from the rig shape, due to it having slightly different proportions.
-        dotsMode: true,
+        // dotsMode: true,
 
         // # sets the scale of the mesh in the scene.  The default scale works with a camera of distance ~15.
         // scale: 1.5,
         // positionScale: 2,
 
         // # Turn this function off to remove the text from displaying on the bones hands
-        boneLabels: function(boneMesh, leapHand) {
-            return boneMesh.name;
-        },
+        // boneLabels: function(boneMesh, leapHand) {
+        //     return boneMesh.name;
+        // },
 
         // # allows individual bones to be colorized
         // # Currently, thumb and index finger turn blue while pinching with any finger
@@ -53,3 +53,39 @@
         },
         checkWebGL: true
     }).connect();
+
+scene = window.controller.plugins.riggedHand.parent; // window.controller because that is what it is called above
+
+
+var geometry = new THREE.BoxGeometry( 40, 40, 40);
+var material = new THREE.MeshBasicMaterial( {color: 0xffffff, wireframe: true} );
+
+// Cube A = left extrema of ellipse
+var cubeA = new THREE.Mesh( geometry, material );
+cubeA.rotation.x += 0.1;
+cubeA.rotation.y += 0.1;
+cubeA.position.set(-350,250,-50);
+
+var cubeB = new THREE.Mesh( geometry, material );
+cubeB.position.set(-225,350,-100);
+
+// Cube C = Center cube of elliptical layout
+// x: -5 centers the cubes
+var cubeC = new THREE.Mesh( geometry, material );
+cubeC.position.set(-5,425,-125);
+
+var cubeD = new THREE.Mesh( geometry, material );
+cubeD.position.set(225,350,-100);
+
+// Cube E = right extrema of ellipse
+var cubeE = new THREE.Mesh( geometry, material );
+cubeE.position.set(350,250,-50);
+//create a group and add the two cubes
+//These cubes can now be rotated / scaled etc as a group
+var group = new THREE.Group();
+group.add( cubeA );
+group.add( cubeB );
+group.add( cubeC );
+group.add( cubeD );
+group.add( cubeE );
+scene.add( group );
