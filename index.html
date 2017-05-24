@@ -4,38 +4,21 @@
         <meta charset="utf-8">
         <title>LightMagic</title>
         <script src="node_modules/leapjs/leap-0.6.4.js"></script>
+        <script type="text/javascript" src="js/three.min.js"></script>
+        <script src="js/leap-plugins-0.1.10.js"></script>
+        <script type="text/javascript" src="js/leap.rigged-hand-0.1.7.js"></script>
         <link rel="stylesheet" href="styles/style.css">
         <link rel="stylesheet" href="styles/leap.css">
+        <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
         <script src="js/index.js"></script>
         <script src="js/leap.js"></script>
+        <script type="text/javascript" src="js/handModel.js"></script>
     </head>
-    <body>
-        <div id="app" class="show-hands">
-            <button id="showHands">Show Hands</button>
-            <button id="hideHands">hide Hands</button>
-            <div id="scene">
-                <div id="cube" class="cube">
-                    <div class="face tp"></div>
-                    <div class="face lt"></div>
-                    <div class="face rt"></div>
-                    <div class="face ft"></div>
-                    <div class="face bk"></div>
-                </div>
-                <div id="finger" class="cube finger">
-                    <div class="face tp"></div>
-                    <div class="face lt"></div>
-                    <div class="face rt"></div>
-                    <div class="face ft"></div>
-                    <div class="face bk"></div>
-                </div>
-                <div id="sphere" class="cube sphere">
-                    <div class="face tp"></div>
-                    <div class="face lt"></div>
-                    <div class="face rt"></div>
-                    <div class="face ft"></div>
-                    <div class="face bk"></div>
-                </div>
-            </div>
-        </div>
+      <body>
+      <button onclick="controller.disconnect();">Disconnect</button>
+      <button onclick="controller.connect();">Connect</button>
+      <div class='box' id="box"></div>
+      <div class='connect'>Tap the spacebar to start and stop</div>
+      <div class='box' id="box"></div>
     </body>
 </html>

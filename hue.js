@@ -4,6 +4,20 @@ $(document).ready(function () {
     });
     $("#allLights").on('click', toggleAllLightsOffOn);
 });
+//color square disconnect and connect
+var state = 'play';
+window.onkeypress = function(e) {
+    if (e.charCode == 32) { //spacebar
+        if (state == 'play') {
+            state = 'pausing';
+        }else{
+            state = 'play';
+        }
+    }
+};
+var haveLoggedFrame = false;
+
+
 // constants for base url are pulled from hue_config.js
 
 function callLights() {
@@ -67,13 +81,37 @@ let cooldown = false;
 let lightSwitchThreshold = 0;
 let upperThreshold = 50;
 
-// var controller = Leap.loop(function (frame) {
-//     if (frame.hands.length > 0) {
-//         var hand = frame.hands[0];
-//         var isFist = checkFist(hand);
-//     }
-// });
 
+var controller = Leap.loop(function (frame) {
+    if (frame.hands.length > 0) {
+        console.log('frame hands',frame.hands[0].type);
+        if(frame.hands[0].type === "left"){
+            var hand = frame.hands[0];
+            var isFist = checkFist(hand);
+
+        }else{
+            console.log("right hand");
+            var x = Math.floor((frame.hands[0].direction[0] + 1) * 128);
+            var z = Math.floor ((frame.hands[0].direction[1] + 1) *  128);
+            var y = Math.floor((frame.hands[0].direction[2] + 1) *  128);
+            var distance = frame.hands[0].sphereCenter[1] + 'px'
+            var color = 'rgb(' + x + "," + z + "," + y + ')';
+            sendColor(color);
+            changeRadius(distance);
+            if (haveLoggedFrame == false && frame.hands[0]){
+                haveLoggedFrame = true;
+            }
+            // return false
+        }
+        // var hand = frame.hands.type;
+    }
+});
+function sendColor(color){
+    document.getElementById('box').style.backgroundColor = color;
+}
+function changeRadius(distance){
+    document.getElementById("box").style.borderRadius = distance;
+}
 function getExtendedFingers(hand) {
     var f = 0;
     for (var i = 0; i < hand.fingers.length; i++) {
@@ -177,7 +215,8 @@ function switchCooldown() {
         setTimeout(function () {
             cooldown = false;
         }, cooldownTimer);
-        // False value once reached upperThreshold will be passed into toggleAllLightsOffOn        
+        // False value once reached upperThreshold will be passed into toggleAllLightsOffOn
+        //temp
         toggleAllLightsOffOn(false);
     } else if (lightSwitchThreshold == upperThreshold) {
         console.log("We have returned true, TURN THAT SHIT ON!");
@@ -185,6 +224,7 @@ function switchCooldown() {
             cooldown = false;
         }, cooldownTimer);
         // True value once reached upperThreshold will be passed into toggleAllLightsOffOn
+        //temp
         toggleAllLightsOffOn(true);
     }
 
