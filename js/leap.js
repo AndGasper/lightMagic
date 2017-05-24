@@ -1,39 +1,90 @@
-$(document).ready(function() {
-    $(".colorButton").on("click", function() {
-        switch(this.value) {
-            case("red"):
-                changeColor(11, {'r': 255, 'g': 0, 'b': 0});
-                break;
-            case("yellow"):
-                changeColor(11, {'r': 255, 'g': 255, 'b': 0});
-                break;
-            case("green"):
-                changeColor(11, {'r': 0, 'g':255, 'b': 0});
-                break;
-            case("blue"):
-                changeColor(11, {'r':0, 'g':0, 'b':255});
-                break;
-            case('violet'):
-                changeColor(11, {'r': 238, 'g':130, 'b':238});
-                break;
-            default:
-                changeColor(11, {'r':255, 'g':255, 'b':255});
-        };
-    });
-});
+window.addEventListener("keypress", userColorChoice);
+
+
+
 let controller = new Leap.Controller();
+
+
+
+let redColor = {'r': 255, 'g': 0, 'b': 0};
+let yellowColor = {'r': 255, 'g': 255, 'b': 0};
+let greenColor = {'r': 0, 'g':255, 'b': 0};
+let blueColor = {'r':0, 'g': 0, 'b': 255};
+let violetColor = {'r': 75, 'g':0, 'b':150};
+let whiteColor = {'r':255, 'g':255, 'b':255};
+
+
+function userColorChoice() {
+    switch(event.keyCode) {
+        case(97):
+            // 97 = a
+            changeColor(11, redColor);
+            changeColor(12, redColor);
+            changeColor(5, redColor);
+            changeColor(16, redColor);
+            changeColor(17, redColor);
+            break;
+        case(115):
+            // 115 = s
+            changeColor(11, yellowColor);
+            changeColor(12, yellowColor);
+            changeColor(5, yellowColor);
+            changeColor(16, yellowColor);
+            changeColor(17, yellowColor);
+
+            break;
+        case(100):
+            // 100 = d
+            changeColor(11, greenColor);
+            changeColor(12, greenColor);
+            changeColor(15, greenColor);
+            changeColor(16, greenColor);
+            changeColor(17, greenColor);
+            break;
+        case(102):
+            // 102 = f
+            changeColor(11, blueColor);
+            changeColor(12, blueColor);
+            changeColor(15, blueColor);
+            changeColor(16, blueColor);
+            changeColor(17, blueColor);
+            break;
+        case(103):
+            // 103 = g
+            changeColor(11, violetColor );
+            changeColor(12, violetColor);
+            changeColor(5, violetColor);
+            changeColor(16, violetColor);
+            changeColor(17, violetColor);
+            break;
+        default:
+            changeColor(11, whiteColor);
+            changeColor(12, whiteColor);
+            changeColor(5, whiteColor);
+            changeColor(16, whiteColor);
+            changeColor(17, whiteColor);
+    };
+}
 
 // Probably does not really need to be named onBlur, but it does seem to only want a function with no parameters
 // change the color to red
 controller.on('blur', onBlur);
 function onBlur() {
 
-    changeColor(11,{'r':255, 'g': 0, 'b': 0});
+    changeColor(11, redColor);
+    changeColor(12, redColor);
+    changeColor(5, redColor);
+    changeColor(16, redColor);
+    changeColor(17, redColor);
 }
 controller.on('focus', onFocus);
 // On focus toggle the color to blue
 function onFocus() {
-  changeColor(11,{'r':0, 'g':0, 'b':255});
+    changeColor(11, blueColor);
+    changeColor(12, blueColor);
+    changeColor(15, blueColor);
+    changeColor(16, blueColor);
+    changeColor(17, blueColor);
 }
 
 // let frameArray = []; // Global frame array. Sorry global namespace
@@ -86,7 +137,7 @@ function changeColor(lightNumber, color) {
         url: `${BASE_URL_LIGHTS}/${lightNumber}/state`,
         method: "PUT",
         dataType: "JSON",
-        data: JSON.stringify({"xy":[x,y], "transitiontime": 0}), // time in milliseconds for the light change to take effect
+        data: JSON.stringify({"xy":[x,y], "transitiontime": 0, "alert": "select"}), // time in milliseconds for the light change to take effect
         // data: JSON.stringify({"hue": hueAdjusted, "sat": saturationAdjusted, "bri": brightnessAdjusted, "transitiontime": 0}),
         success: (response) => {
 
