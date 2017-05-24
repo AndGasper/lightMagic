@@ -23,10 +23,11 @@ function callLights() {
 
     });
 }
-
+var lightState = false;
 function toggleLightsOffOn(lightId, boolean) {
     const BASE_URL = `http://${bridgeIPAddress}/api/${hueUsername}/lights/${lightId}/state`;
     const state = $("#onOffCheckbox:checked");
+    lightState = boolean;
     $.ajax({
         url: `${BASE_URL}`,
         dataType: "JSON",
@@ -126,41 +127,42 @@ var controller = Leap.loop({
         var finger = hand.fingers;
         var fingerType = ["thumb","index","middle","ring","pinky"];
         for(var f=0;f<finger.length;f++){
-            if(finger[f].extended && hand.type === "left"){
-                console.log(fingerType[f]+" extended");
-                if(f === 0){
-                    toggleLightsOffOn("11",true)
-                }
+            if(finger[f].extended && hand.type === "left" && lightState === false){
+                // if(f === 0){
+                //     toggleLightsOffOn("11",true)
+                // }
+                // if(f === 1){
+                //     toggleLightsOffOn("12",true)
+                // }
+                // if(f === 2){
+                //     toggleLightsOffOn("5", true)
+                // }
+                // if(f === 3){
+                //     toggleLightsOffOn("16", true)
+                // }
                 if(f === 1){
-                    toggleLightsOffOn("12",true)
-                }
-                if(f === 2){
-                    toggleLightsOffOn("5", true)
-                }
-                if(f === 3){
-                    toggleLightsOffOn("16", true)
-                }
-                if(f === 4){
                     toggleLightsOffOn("17", true)
+                    console.log("index extended");
                 }
             }
-            // else if(!finger[f].extended && hand.type === "left"){
-            //     if(f === 0){
-            //         toggleLightsOffOn("11", false)
-            //     }
-            //     if(f === 1){
-            //         toggleLightsOffOn("12", false)
-            //     }
-            //     if(f === 2){
-            //         toggleLightsOffOn("5", false)
-            //     }
-            //     if(f === 3){
-            //         toggleLightsOffOn("16", false)
-            //     }
-            //     if(f === 4){
-            //         toggleLightsOffOn("17", false)
-            //     }
-            // }
+            if(!finger[f].extended && hand.type === "left" && lightState === true){
+                // if(f === 0){
+                //     toggleLightsOffOn("11",false)
+                // }
+                // if(f === 1){
+                //     toggleLightsOffOn("12",false)
+                // }
+                // if(f === 2){
+                //     toggleLightsOffOn("5", false)
+                // }
+                // if(f === 3){
+                //     toggleLightsOffOn("16", false)
+                // }
+                if(f === 1){
+                    toggleLightsOffOn("17", false)
+                    console.log("Index extended");
+                }
+            }
         }
     }
 });
