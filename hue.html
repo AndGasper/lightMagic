@@ -4,13 +4,22 @@
     <meta charset="UTF-8">
     <title>Hue JS File</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="styles/leap.css">
+    <script src="node_modules/leapjs/leap-0.6.4.js"></script>
     <script src="hue_config.js"></script>
     <script src="hue.js"></script>
+    <script src="js/leap.js"></script>
 </head>
 <body>
+
 <p>Select the light: you want the state of:</p> <input type="number" id="lightNumber">
 <button type="button" id="hueGET">Is this light on?</button>
 
 
+
+<button type="button" id="allLights">Turn all lights on/off</button>
+<div class='box' id="box"></div>
+<button onclick="controller.disconnect();">Disconnect</button>
+<button onclick="controller.connect();">Connect</button>
 </body>
 </html>
