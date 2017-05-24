@@ -1,5 +1,7 @@
 $(document).ready(function () {
-    $("#hueGET").on('click', toggleLightsOffOn);
+    $("#hueGET").click(function(){
+        toggleLightsOffOn("11");
+    });
     $("#allLights").on('click', toggleAllLightsOffOn);
 });
 //color square disconnect and connect
@@ -25,60 +27,101 @@ function callLights() {
         dataType: "JSON",
         method: "GET",
         success: function (response) {
-            console.log("success callLights", response);
             // then toggle the lights off
             for (let i = 0; i < Object.keys(response); i++) {
                 toggleLightsOff(i); // toggle each light off by iterating through with this axios call
             }
         },
         error: function (response) {
-            console.log("callLights error", response);
         }
     });
 }
-// Is this light off or on?
-function getLightState() {
+var Finger = function(id){
+    this.lightState = false;
+    this.lightId = id;
+};
 
+var thumb = new Finger(11);
+var index = new Finger(12);
+var middle = new Finger(5);
+var ring = new Finger(16);
+var pinky = new Finger(17);
 
-    const lightNumber = $("#lightNumber").val();
-    console.log("lightNumber", lightNumber);
-    const BASE_URL = `http://${bridgeIPAddress}/api/${hueUsername}/lights/${lightNumber.toString()}`;
-    console.log("getLightState BASE_URL", BASE_URL); // checking the base url
-    $.ajax({
-        url: `${BASE_URL}`,
-        dataType: "JSON",
-        method: "GET",
-        success: (response) => {
-            console.log("getLightState response.state", response.state);
-            let lightStateText = response.state.on.toString(); // Convert the boolean to a string
-            let lightState = $("<p>").text(lightStateText);
-            $(".body").append(lightState);
-        },
-        error: (response) => {
-            console.log("getLightState response error", response);
-
-function toggleLightsOffOn() {
-    const BASE_URL = `http://${bridgeIPAddress}/api/${hueUsername}/lights/11/state`;
+function toggleLightsOffOn(fingerObj) {
+    const BASE_URL = `http://${bridgeIPAddress}/api/${hueUsername}/lights/${fingerObj.lightId}/state`;
     const state = $("#onOffCheckbox:checked");
-    console.log("toggleLightsOff state", state);
-    let lightState = { "on": "true" };
-
-    console.log("lightState", lightState);
+    if(fingerObj.lightState === true){
+        fingerObj.lightState = false;
+    }
+    else{
+        fingerObj.lightState = true;
+    }
     $.ajax({
         url: `${BASE_URL}`,
         dataType: "JSON",
         method: "PUT",
-        data: '{"on": true}',
+        data: '{"on": '+fingerObj.lightState+'}',
         success: function (response) {
-            console.log("toggleLights success response", response);
+          
         },
         error: function (response) {
-            console.log("toggleLights error response", response);
-
+          
         }
-    })
+    });
+
 }
 
+var controller = Leap.loop({
+    hand: function (hand){
+        var finger = hand.fingers;
+        for(var f=0;f<finger.length;f++){
+            if(finger[f].extended && hand.type === "left"){
+                if(f === 0 && thumb.lightState === false){
+                    toggleLightsOffOn(thumb)
+                    console.log("thumb extended")
+                }
+                if(f === 1 && index.lightState === false){
+                    toggleLightsOffOn(index)
+                    console.log("index extended")
+                }
+                if(f === 2 && middle.lightState === false){
+                    toggleLightsOffOn(middle)
+                    console.log("middle extended")
+                }
+                if(f === 3 && ring.lightState === false){
+                    toggleLightsOffOn(ring)
+                    console.log("ring extended")
+                }
+                if(f === 4 && pinky.lightState === false){
+                    toggleLightsOffOn(pinky)
+                    console.log("pinky extended")
+                }
+            }
+            if(!finger[f].extended && hand.type === "left"){
+                if(f === 0 && thumb.lightState === true){
+                    toggleLightsOffOn(thumb)
+                    console.log("thumb not extended")
+                }
+                if(f === 1 && index.lightState === true){
+                    toggleLightsOffOn(index)
+                    console.log("index not extended")
+                }
+                if(f === 2 && middle.lightState === true){
+                    toggleLightsOffOn(middle)
+                    console.log("middle not extended")
+                }
+                if(f === 3 && ring.lightState === true){
+                    toggleLightsOffOn(ring)
+                    console.log("ring not extended")
+                }
+                if(f === 4 && pinky.lightState === true){
+                    toggleLightsOffOn(pinky)
+                    console.log("pinky not extended")
+                }
+            }
+        }
+    }
+});
 
 // Convert RGB color values to Hue, Saturation and brightness, function returns an object
 function getHSB(r,g,b) {
@@ -123,7 +166,7 @@ function getHSB(r,g,b) {
 }
 
 // console.log("getHue", getHue(230,255,211));
-console.log("getHue(222,250,100)", getHSB(255,250,100));
+console.log("getHue(255,250,100)", getHSB(255,250,100));
 //RGB and their HSL Values
     // RGB = 255, 250, 100
     // HSL = 58, 100.0, 69.6 - Yellow
@@ -133,7 +176,7 @@ console.log("getHue(222,250,100)", getHSB(255,250,100));
     // HSL = 180, 100, 69.6 - Cyan
 
 
-// color is an object with r,g,b
+// HSB version. takes in a color object with r,g,b
 function changeColor(lightNumber, color) {
     const BASE_URL_LIGHTS = `http://${bridgeIPAddress}/api/${hueUsername}/lights`;
     const {r, g, b} = color; // pull off r, g, and b from color
@@ -156,132 +199,137 @@ function changeColor(lightNumber, color) {
         }
     });
 }
+
 function toggleAllLightsOffOn(boolean) {
     const BASE_URL = `http://${bridgeIPAddress}/api/${hueUsername}/groups/3/action`;
     const state = $("#onOffCheckbox:checked");
-    console.log("toggleLightsOff state", state);
     let lightState = { "on": boolean };
-    console.log("lightState", lightState);
     $.ajax({
         url: `${BASE_URL}`,
         dataType: "JSON",
         method: "PUT",
         data: JSON.stringify(lightState),
         success: function (response) {
-            console.log("toggleLights success response", response);
         },
         error: function (response) {
-            console.log("toggleLights error response", response);
         }
     })
 }
 
 
-// LeapMotion Fist on / off
-// Gesture thresholds in order to turn Hue lights on and off
-const minValue = 0.5;
-
-let cooldownTimer = 250;
-let cooldown = false;
-let lightSwitchThreshold = 0;
-let upperThreshold = 50;
-
-var controller = Leap.loop(function (frame) {
-    if (frame.hands.length > 0) {
-        console.log('frame hands',frame.hands[0].type);
-        if(frame.hands[0].type === "left"){
-            var hand = frame.hands[0];
-            var isFist = checkFist(hand);
-
-        }else{
-            console.log("right hand");
-            var x = Math.floor((frame.hands[0].direction[0] + 1) * 128);
-            var z = Math.floor ((frame.hands[0].direction[1] + 1) *  128);
-            var y = Math.floor((frame.hands[0].direction[2] + 1) *  128);
-            var color = 'rgb(' + x + "," + z + "," + y + ')';
-            sendColor(color);
-            if (haveLoggedFrame == false && frame.hands[0]){
-                haveLoggedFrame = true;
-            }
-            // return false
-        }
-        // var hand = frame.hands.type;
-    }
-});
 function sendColor(color){
     document.getElementById('box').style.backgroundColor = color;
 }
-function getExtendedFingers(hand) {
-    var f = 0;
-    for (var i = 0; i < hand.fingers.length; i++) {
-        if (hand.fingers[i].extended) {
-            f++;
-        }
-    }
-    return f;
+function changeRadius(distance){
+    document.getElementById("box").style.borderRadius = distance;
 }
 
-function checkFist(hand) {
-    var sum = 0;
-    for (var i = 0; i < hand.fingers.length; i++) {
-        var finger = hand.fingers[i];
-        var meta = finger.bones[0].direction();
-        var proxi = finger.bones[1].direction();
-        var inter = finger.bones[2].direction();
-        var dMetaProxi = Leap.vec3.dot(meta, proxi);
-        var dProxiInter = Leap.vec3.dot(proxi, inter);
-        sum += dMetaProxi;
-        sum += dProxiInter
-    }
-    sum = sum / 10;
+// ************************************************************
+// Old way to do light control with fist/palm STARTS HERE
+// ************************************************************
 
-    // Conditional used to check if you have a fist
-    // Fist should decrease our threshold to returns a false boolean
-    // Threshold is currently set to 0 for Off
-    if (sum <= minValue && getExtendedFingers(hand) == 0) {
-        if (lightSwitchThreshold > 0 && cooldown == false) {
-            lightSwitchThreshold--;
-            console.log("Decreasing threshold", lightSwitchThreshold);
-        }
-        if (lightSwitchThreshold == 0 && cooldown == false) {
-            switchCooldown();
-        }
-        // Else conditional used to check if you don't have a fist(palm)
-        // Open hand or palm increases our threshold to returns a true boolean
-        // Threshold is currently set to 100 for On
-    } else {
-        if (lightSwitchThreshold < upperThreshold && cooldown == false) {
-            lightSwitchThreshold++;
-            console.log("Increasing threshold", lightSwitchThreshold);
-        }
-        if (lightSwitchThreshold == upperThreshold && cooldown == false) {
-            switchCooldown();
-        }
-    }
-}
+// LeapMotion Fist on / off
+// Gesture thresholds in order to turn Hue lights on and off
+// const minValue = 0.5;
+// let cooldownTimer = 250;
+// let cooldown = false;
+// let lightSwitchThreshold = 0;
+// let upperThreshold = 50;
 
-// Timeout to prevent multiple triggers for light on/off functionality
-// Sets cooldown to true to prevent multiple truthy/falsey values to be returned
-// cooldownTimer global variable used to adjust for cooldown length
-function switchCooldown() {
-    cooldown = true;
-    if (lightSwitchThreshold == 0) {
-        console.log("We have returned false, TURN THAT SHIT OFF!");
-        setTimeout(function () {
-            cooldown = false;
-        }, cooldownTimer);
-        // False value once reached upperThreshold will be passed into toggleAllLightsOffOn
-        //temp
-        toggleAllLightsOffOn(false);
-    } else if (lightSwitchThreshold == upperThreshold) {
-        console.log("We have returned true, TURN THAT SHIT ON!");
-        setTimeout(function () {
-            cooldown = false;
-        }, cooldownTimer);
-        // True value once reached upperThreshold will be passed into toggleAllLightsOffOn
-        //temp
-        toggleAllLightsOffOn(true);
-    }
+// var controller = Leap.loop(function (frame) {
+//     if (frame.hands.length > 0) {
+//         if(frame.hands[0].type === "left"){
+//             var hand = frame.hands[0];
+//             var isFist = checkFist(hand);
 
-}
+//         }else{
+//             var x = Math.floor((frame.hands[0].direction[0] + 1) * 128);
+//             var z = Math.floor ((frame.hands[0].direction[1] + 1) *  128);
+//             var y = Math.floor((frame.hands[0].direction[2] + 1) *  128);
+//             var distance = frame.hands[0].sphereCenter[1] + 'px'
+//             var color = 'rgb(' + x + "," + z + "," + y + ')';
+//             sendColor(color);
+//             changeRadius(distance);
+//             if (haveLoggedFrame == false && frame.hands[0]){
+//                 haveLoggedFrame = true;
+//             }
+//             // return false
+//         }
+//         // var hand = frame.hands.type;
+//     }
+// });
 
+// function checkFist(hand) {
+//     var sum = 0;
+//     for (var i = 0; i < hand.fingers.length; i++) {
+//         var finger = hand.fingers[i];
+//         var meta = finger.bones[0].direction();
+//         var proxi = finger.bones[1].direction();
+//         var inter = finger.bones[2].direction();
+//         var dMetaProxi = Leap.vec3.dot(meta, proxi);
+//         var dProxiInter = Leap.vec3.dot(proxi, inter);
+//         sum += dMetaProxi;
+//         sum += dProxiInter
+//     }
+//     sum = sum / 10;
+
+//     // Conditional used to check if you have a fist
+//     // Fist should decrease our threshold to returns a false boolean
+//     // Threshold is currently set to 0 for Off
+//     if (sum <= minValue && getExtendedFingers(hand) == 0) {
+//         if (lightSwitchThreshold > 0 && cooldown == false) {
+//             lightSwitchThreshold--;
+//         }
+//         if (lightSwitchThreshold == 0 && cooldown == false) {
+//             switchCooldown();
+//         }
+//         // Else conditional used to check if you don't have a fist(palm)
+//         // Open hand or palm increases our threshold to returns a true boolean
+//         // Threshold is currently set to 100 for On
+//     } else {
+//         if (lightSwitchThreshold < upperThreshold && cooldown == false) {
+//             lightSwitchThreshold++;
+//         }
+//         if (lightSwitchThreshold == upperThreshold && cooldown == false) {
+//             switchCooldown();
+//         }
+//     }
+// }
+
+// function getExtendedFingers(hand) {
+//     var f = 0;
+//     for (var i = 0; i < hand.fingers.length; i++) {
+//         if (hand.fingers[i].extended) {
+//             f++;
+//         }
+//     }
+//     return f;
+// }
+
+
+// // Timeout to prevent multiple triggers for light on/off functionality
+// // Sets cooldown to true to prevent multiple truthy/falsey values to be returned
+// // cooldownTimer global variable used to adjust for cooldown length
+// function switchCooldown() {
+//     cooldown = true;
+//     if (lightSwitchThreshold == 0) {
+//         setTimeout(function () {
+//             cooldown = false;
+//         }, cooldownTimer);
+//         // False value once reached upperThreshold will be passed into toggleAllLightsOffOn
+//         //temp
+//         toggleAllLightsOffOn(false);
+//     } else if (lightSwitchThreshold == upperThreshold) {
+//         setTimeout(function () {
+//             cooldown = false;
+//         }, cooldownTimer);
+//         // True value once reached upperThreshold will be passed into toggleAllLightsOffOn
+//         //temp
+//         toggleAllLightsOffOn(true);
+//     }
+
+// }
+
+// ************************************************************
+// Old way to do light control with fist/palm ENDS HERE
+// ************************************************************

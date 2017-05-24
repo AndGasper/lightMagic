@@ -2,6 +2,7 @@
       width: 400px;
       height: 400px;
       background-color: rgb(255, 0, 0);
+      border-radius: 0px;
   }
   .cube {
       width: 100%;

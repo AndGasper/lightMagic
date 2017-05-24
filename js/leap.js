@@ -1,17 +1,46 @@
-window.addEventListener("keypress", userColorChoice);
+var state = 'play';
+window.onkeypress = function(e) {
+  if (e.charCode == 32) { //spacebar
+    if (state == 'play') {
+      state = 'pausing';
+    }else{
+      state = 'play';
+    }
+  }
+};
+var haveLoggedFrame = false;
+var controller = new Leap.Controller({enableGestures: true});
+controller.loop(function(frame) {
+  if (state == 'paused'){
+      return
+  }
+  if (state == 'pausing') {
+    state = 'paused';
+  }else{
+    if(frame.hands[0] && frame.hands[0].type === 'right'){
+        var x = Math.floor((frame.hands[0].direction[0] + 1) * 128);
+        var z = Math.floor ((frame.hands[0].direction[1] + 1) *  128);
+        var y = Math.floor((frame.hands[0].direction[2] + 1) *  128);
+        var color = 'rgb(' + x + "," + z + "," + y + ')';
+        sendColor(color);
+    }
+  }
+
+  if (haveLoggedFrame == false && frame.hands[0]){
+    haveLoggedFrame = true;
+  }
+
+});
+
+  window.addEventListener("keypress", userColorChoice);
 
 
-
-let controller = new Leap.Controller();
-
-
-
-let redColor = {'r': 255, 'g': 0, 'b': 0};
-let yellowColor = {'r': 255, 'g': 255, 'b': 0};
-let greenColor = {'r': 0, 'g':255, 'b': 0};
-let blueColor = {'r':0, 'g': 0, 'b': 255};
-let violetColor = {'r': 75, 'g':0, 'b':150};
-let whiteColor = {'r':255, 'g':255, 'b':255};
+  let redColor = {'r': 255, 'g': 0, 'b': 0};
+  let yellowColor = {'r': 255, 'g': 255, 'b': 0};
+  let greenColor = {'r': 0, 'g':255, 'b': 0};
+  let blueColor = {'r':0, 'g': 0, 'b': 255};
+  let violetColor = {'r': 75, 'g':0, 'b':150};
+  let whiteColor = {'r':255, 'g':255, 'b':255};
 
 
 function userColorChoice() {
@@ -66,50 +95,6 @@ function userColorChoice() {
     };
 }
 
-// Probably does not really need to be named onBlur, but it does seem to only want a function with no parameters
-// change the color to red
-controller.on('blur', onBlur);
-function onBlur() {
-
-    changeColor(11, redColor);
-    changeColor(12, redColor);
-    changeColor(5, redColor);
-    changeColor(16, redColor);
-    changeColor(17, redColor);
-}
-controller.on('focus', onFocus);
-// On focus toggle the color to blue
-function onFocus() {
-    changeColor(11, blueColor);
-    changeColor(12, blueColor);
-    changeColor(15, blueColor);
-    changeColor(16, blueColor);
-    changeColor(17, blueColor);
-}
-
-// let frameArray = []; // Global frame array. Sorry global namespace
-// controller.loop(function(frame) {
-//     if (state == 'paused') return;
-//     if (state == 'pausing') {
-//         state = 'paused';
-//     } else {
-//         if (frame.hands[0] && frame.hands[0].type === 'right') {
-//             frameArray.push(frame.timestamp); // push the current time stamp into the array
-//             // Compare the frames being rendered ~110 fps
-//             if (frameArray[frameArray.length-1] - frameArray[parseInt(frameArray.length/2)] > 100) {
-//                 var x = Math.floor((frame.hands[0].direction[0] + 1) * 128); // x = red
-//                 var z = Math.floor((frame.hands[0].direction[1] + 1) * 128); // z = green
-//                 var y = Math.floor((frame.hands[0].direction[2] + 1) * 128); // y = blue
-//                 var color = 'rgb(' + x + "," + z + "," + y + ')';
-//                 sendColor(color);
-//                 changeColor(11, {"r": x, "g": z, "b": y}); // add a 500 ms delay before changing the color call
-//             }
-//         }
-//         if (haveLoggedFrame == false && frame.hands[0]) {
-//             haveLoggedFrame = true;
-//         }
-//     }
-// });
 
 function calculate_cieXY_from_rgb(R,G,B){
     const X = 0.4124*R + 0.3576*G + 0.1805*B;
