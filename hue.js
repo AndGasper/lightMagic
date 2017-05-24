@@ -155,7 +155,6 @@ function changeColor(lightNumber, color) {
             console.log("changeColor error", response);
         }
     });
-
 }
 function toggleAllLightsOffOn(boolean) {
     const BASE_URL = `http://${bridgeIPAddress}/api/${hueUsername}/groups/3/action`;
