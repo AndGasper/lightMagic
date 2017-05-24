@@ -6,6 +6,7 @@
 
 // # Advanced Hands with options defined.
 (window.controller = new Leap.Controller)
+    .setBackground(false)
     .use('handHold', {})
     .use('handEntry', {})
     .use('riggedHand', {
@@ -14,13 +15,14 @@
         // # this is called on every animationFrame
         // renderFn: function() {
         //     renderer.render(scene, camera);
-        //     return controls.update();
+        //     return controller.update();
         // },
 
         // # These options are merged with the material options hash
         // # Any valid Three.js material options are valid here.
         materialOptions: {
             // wireframe: true,
+            opacity: 1,
             color: new THREE.Color(0xfafafa)
         },
         // geometryOptions: {},
@@ -44,7 +46,7 @@
         // # should return an object with hue, saturation, and an optional lightness ranging from 0 to 1
         // # http://threejs.org/docs/#Reference/Math/Color [setHSL]
         boneColors: function(boneMesh, leapHand) {
-            if ((boneMesh.name.indexOf('T_') === 0) || (boneMesh.name.indexOf('I_') === 0)) {
+            if ((boneMesh.name.indexOf('T_3') === 0) || (boneMesh.name.indexOf('I_3') === 0)) {
                 return {
                     hue: 0.6,
                     saturation: leapHand.pinchStrength
@@ -57,8 +59,9 @@
 
 var sphere, sphereMesh;
 sphere = new THREE.Mesh(new THREE.SphereGeometry(30), sphereMesh = new THREE.MeshBasicMaterial({color: 0x00ff00}));
-scene.add(sphere);
 
+scene = window.controller.plugins.riggedHand.parent;
+scene.add(sphere);
 
 controller.on('frame', function(frame) {
     sphere.visible = false;
@@ -66,7 +69,7 @@ controller.on('frame', function(frame) {
 });
 
 function findRight(hand){
-    if (hand.type === 'right')
+    if (hand.type === 'right' && hand.grabStrength < 1)
         return displaySphere(hand);
 }
 
