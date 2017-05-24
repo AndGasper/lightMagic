@@ -98,11 +98,6 @@ sphere = new THREE.Mesh(new THREE.SphereGeometry(30), sphereMesh = new THREE.Mes
 scene = window.controller.plugins.riggedHand.parent;
 scene.add(sphere);
 
-controller.on('frame', function(frame) {
-    sphere.visible = false;
-    frame.hands.forEach(findRight);
-});
-
 function findRight(hand){
     if (hand.type === 'right' && hand.grabStrength < 1)
         return displaySphere(hand);
@@ -114,3 +109,8 @@ function displaySphere (hand){
     return handMesh.scenePosition(hand.sphereCenter, sphere.position);
 }
 
+// This is the post render callback function.  It gets called on each frame received
+controller.on('frame', function(frame) {
+    sphere.visible = false;
+    frame.hands.forEach(findRight);
+});
