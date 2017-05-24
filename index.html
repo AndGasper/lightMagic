@@ -5,6 +5,8 @@
         <title>LightMagic</title>
         <script src="node_modules/leapjs/leap-0.6.4.js"></script>
         <script type="text/javascript" src="js/three.min.js"></script>
+        <script src="js/TrackballControls.js"></script>
+        <script src="js/OrbitControls.js"></script>
         <script src="js/leap-plugins-0.1.10.js"></script>
         <script type="text/javascript" src="js/leap.rigged-hand-0.1.7.js"></script>
         <link rel="stylesheet" href="styles/style.css">
@@ -12,9 +14,8 @@
         <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
         <script src="hue_config.js"></script>
         <script src="js/leap.js"></script>
-        <script type="text/javascript" src="js/handModel.js"></script>
     </head>
-      <body>
+    <body>
       <button onclick="controller.disconnect();">Disconnect</button>
       <button onclick="controller.connect();">Connect</button>
       <div class='box' id="box"></div>
@@ -28,6 +29,6 @@
       <button class="colorButton" type="button" value="violet">Violet</button>
       </div>
 
+    </body>
+</html>
 
-      </body>
-    </html>
