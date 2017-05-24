@@ -10,13 +10,24 @@
         <link rel="stylesheet" href="styles/style.css">
         <link rel="stylesheet" href="styles/leap.css">
         <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+        <script src="hue_config.js"></script>
         <script src="js/leap.js"></script>
-        <!--<script type="text/javascript" src="js/handModel.js"></script>-->
+        <script type="text/javascript" src="js/handModel.js"></script>
     </head>
       <body>
       <button onclick="controller.disconnect();">Disconnect</button>
       <button onclick="controller.connect();">Connect</button>
       <div class='box' id="box"></div>
       <div class='connect'>Tap the spacebar to start and stop</div>
-    </body>
-</html>
+        
+      <div class="colorButtons" style="margin: 1em">
+      <button class="colorButton" type="button" value="red">Red</button>
+      <button class="colorButton" type="button" value="yellow">Yellow</button>
+      <button class="colorButton" type="button" value="green">Green</button>
+      <button class="colorButton" type="button" value="blue">Blue</button>
+      <button class="colorButton" type="button" value="violet">Violet</button>
+      </div>
+
+
+      </body>
+    </html>
