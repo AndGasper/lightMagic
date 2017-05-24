@@ -1,7 +1,7 @@
   .box {
       width: 400px;
       height: 400px;
-      background-color: rgb(255, 0, 0);
+      /*background-color: rgb(255, 0, 0);*/
       border-radius: 0px;
   }
   .cube {
@@ -20,4 +20,8 @@
       height: 150px;
       margin: 75px 0 0 75px;
       border: none;
+  }
+  
+  body {
+      background-color: #000000;
   }

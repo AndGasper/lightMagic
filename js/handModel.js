@@ -57,16 +57,46 @@
     }).connect();
 
 
+scene = window.controller.plugins.riggedHand.parent; // window.controller because that is what it is called above
+
+
+var geometry = new THREE.BoxGeometry( 40, 40, 40);
+var material = new THREE.MeshBasicMaterial( {color: 0xffffff, wireframe: true} );
+
+// Cube A = left extrema of ellipse
+var cubeA = new THREE.Mesh( geometry, material );
+cubeA.position.set(-350,250,-50);
+
+var cubeB = new THREE.Mesh( geometry, material );
+cubeB.position.set(-225,350,-100);
+
+// Cube C = Center cube of elliptical layout
+// x: -5 centers the cubes
+var cubeC = new THREE.Mesh( geometry, material );
+cubeC.position.set(-5,425,-125);
+
+var cubeD = new THREE.Mesh( geometry, material );
+cubeD.position.set(225,350,-100);
+
+// Cube E = right extrema of ellipse
+var cubeE = new THREE.Mesh( geometry, material );
+cubeE.position.set(350,250,-50);
+//create a group and add the two cubes
+//These cubes can now be rotated / scaled etc as a group
+var group = new THREE.Group();
+group.add( cubeA );
+group.add( cubeB );
+group.add( cubeC );
+group.add( cubeD );
+group.add( cubeE );
+scene.add( group );
+
+
 var sphere, sphereMesh;
 sphere = new THREE.Mesh(new THREE.SphereGeometry(30), sphereMesh = new THREE.MeshBasicMaterial({color: 0x00ff00}));
 
 scene = window.controller.plugins.riggedHand.parent;
 scene.add(sphere);
-
-controller.on('frame', function(frame) {
-    sphere.visible = false;
-    frame.hands.forEach(findRight);
-});
 
 function findRight(hand){
     if (hand.type === 'right' && hand.grabStrength < 1)
@@ -78,3 +108,9 @@ function displaySphere (hand){
     sphere.visible = true;
     return handMesh.scenePosition(hand.sphereCenter, sphere.position);
 }
+
+// This is the post render callback function.  It gets called on each frame received
+controller.on('frame', function(frame) {
+    sphere.visible = false;
+    frame.hands.forEach(findRight);
+});
