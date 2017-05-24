@@ -65,8 +65,6 @@ var material = new THREE.MeshBasicMaterial( {color: 0xffffff, wireframe: true} )
 
 // Cube A = left extrema of ellipse
 var cubeA = new THREE.Mesh( geometry, material );
-cubeA.rotation.x += 0.1;
-cubeA.rotation.y += 0.1;
 cubeA.position.set(-350,250,-50);
 
 var cubeB = new THREE.Mesh( geometry, material );
