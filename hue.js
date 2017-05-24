@@ -211,7 +211,7 @@ var controller = Leap.loop({
 function switchCooldown() {
     cooldown = true;
     if (lightSwitchThreshold == 0) {
-        console.log("We have returned false, TURN THAT SHIT OFF!");
+        console.log("False, turn lights off");
         setTimeout(function () {
             cooldown = false;
         }, cooldownTimer);
@@ -219,12 +219,11 @@ function switchCooldown() {
         //temp
         toggleAllLightsOffOn(false);
     } else if (lightSwitchThreshold == upperThreshold) {
-        console.log("We have returned true, TURN THAT SHIT ON!");
+        console.log("True, turn all the ligts on");
         setTimeout(function () {
             cooldown = false;
         }, cooldownTimer);
         // True value once reached upperThreshold will be passed into toggleAllLightsOffOn
-        //temp
         toggleAllLightsOffOn(true);
     }
 
