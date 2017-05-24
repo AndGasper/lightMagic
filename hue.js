@@ -1,5 +1,7 @@
 $(document).ready(function () {
-    $("#hueGET").on('click', toggleLightsOffOn);
+    $("#hueGET").click(function(){
+        toggleLightsOffOn("11");
+    });
     $("#allLights").on('click', toggleAllLightsOffOn);
 });
 //color square disconnect and connect
@@ -25,56 +27,46 @@ function callLights() {
         dataType: "JSON",
         method: "GET",
         success: function (response) {
-            console.log("success callLights", response);
             // then toggle the lights off
             for (let i = 0; i < Object.keys(response); i++) {
                 toggleLightsOff(i); // toggle each light off by iterating through with this axios call
             }
         },
         error: function (response) {
-            console.log("callLights error", response);
         }
 
     });
 }
-
-function toggleLightsOffOn() {
-    const BASE_URL = `http://${bridgeIPAddress}/api/${hueUsername}/lights/11/state`;
+var lightState = false;
+function toggleLightsOffOn(lightId, boolean) {
+    const BASE_URL = `http://${bridgeIPAddress}/api/${hueUsername}/lights/${lightId}/state`;
     const state = $("#onOffCheckbox:checked");
-    console.log("toggleLightsOff state", state);
-    let lightState = { "on": "true" };
-
-    console.log("lightState", lightState);
+    lightState = boolean;
     $.ajax({
         url: `${BASE_URL}`,
         dataType: "JSON",
         method: "PUT",
-        data: '{"on": true}',
+        data: '{"on": '+boolean+'}',
         success: function (response) {
-            console.log("toggleLights success response", response);
         },
         error: function (response) {
-            console.log("toggleLights error response", response);
         }
-    })
+    });
+    return boolean
 }
 
 function toggleAllLightsOffOn(boolean) {
     const BASE_URL = `http://${bridgeIPAddress}/api/${hueUsername}/groups/3/action`;
     const state = $("#onOffCheckbox:checked");
-    console.log("toggleLightsOff state", state);
     let lightState = { "on": boolean };
-    console.log("lightState", lightState);
     $.ajax({
         url: `${BASE_URL}`,
         dataType: "JSON",
         method: "PUT",
         data: JSON.stringify(lightState),
         success: function (response) {
-            console.log("toggleLights success response", response);
         },
         error: function (response) {
-            console.log("toggleLights error response", response);
         }
     })
 }
@@ -88,6 +80,7 @@ let cooldownTimer = 250;
 let cooldown = false;
 let lightSwitchThreshold = 0;
 let upperThreshold = 50;
+
 
 var controller = Leap.loop(function (frame) {
     if (frame.hands.length > 0) {
@@ -149,7 +142,6 @@ function checkFist(hand) {
     if (sum <= minValue && getExtendedFingers(hand) == 0) {
         if (lightSwitchThreshold > 0 && cooldown == false) {
             lightSwitchThreshold--;
-            console.log("Decreasing threshold", lightSwitchThreshold);
         }
         if (lightSwitchThreshold == 0 && cooldown == false) {
             switchCooldown();
@@ -160,13 +152,58 @@ function checkFist(hand) {
     } else {
         if (lightSwitchThreshold < upperThreshold && cooldown == false) {
             lightSwitchThreshold++;
-            console.log("Increasing threshold", lightSwitchThreshold);
         }
         if (lightSwitchThreshold == upperThreshold && cooldown == false) {
             switchCooldown();
         }
     }
 }
+
+
+var controller = Leap.loop({
+    hand: function (hand){
+        var finger = hand.fingers;
+        var fingerType = ["thumb","index","middle","ring","pinky"];
+        for(var f=0;f<finger.length;f++){
+            if(finger[f].extended && hand.type === "left" && lightState === false){
+                // if(f === 0){
+                //     toggleLightsOffOn("11",true)
+                // }
+                // if(f === 1){
+                //     toggleLightsOffOn("12",true)
+                // }
+                // if(f === 2){
+                //     toggleLightsOffOn("5", true)
+                // }
+                // if(f === 3){
+                //     toggleLightsOffOn("16", true)
+                // }
+                if(f === 1){
+                    toggleLightsOffOn("17", true)
+                    console.log("index extended");
+                }
+            }
+            if(!finger[f].extended && hand.type === "left" && lightState === true){
+                // if(f === 0){
+                //     toggleLightsOffOn("11",false)
+                // }
+                // if(f === 1){
+                //     toggleLightsOffOn("12",false)
+                // }
+                // if(f === 2){
+                //     toggleLightsOffOn("5", false)
+                // }
+                // if(f === 3){
+                //     toggleLightsOffOn("16", false)
+                // }
+                if(f === 1){
+                    toggleLightsOffOn("17", false)
+                    console.log("Index extended");
+                }
+            }
+        }
+    }
+});
 
 // Timeout to prevent multiple triggers for light on/off functionality
 // Sets cooldown to true to prevent multiple truthy/falsey values to be returned
