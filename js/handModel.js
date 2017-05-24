@@ -21,22 +21,22 @@
         // # Any valid Three.js material options are valid here.
         materialOptions: {
             // wireframe: true,
-            color: new THREE.Color(0xff0000)
+            color: new THREE.Color(0xfafafa)
         },
         // geometryOptions: {},
 
         // # This will show pink dots at the raw position of every leap joint on the last hand object created
         // # they will be slightly offset from the rig shape, due to it having slightly different proportions.
-        dotsMode: true,
+        // dotsMode: true,
 
         // # sets the scale of the mesh in the scene.  The default scale works with a camera of distance ~15.
         // scale: 1.5,
         // positionScale: 2,
 
         // # Turn this function off to remove the text from displaying on the bones hands
-        boneLabels: function(boneMesh, leapHand) {
-            return boneMesh.name;
-        },
+        // boneLabels: function(boneMesh, leapHand) {
+        //     return boneMesh.name;
+        // },
 
         // # allows individual bones to be colorized
         // # Currently, thumb and index finger turn blue while pinching with any finger
@@ -53,3 +53,25 @@
         },
         checkWebGL: true
     }).connect();
+
+
+var sphere, sphereMesh;
+sphere = new THREE.Mesh(new THREE.SphereGeometry(30), sphereMesh = new THREE.MeshBasicMaterial({color: 0x00ff00}));
+scene.add(sphere);
+
+
+controller.on('frame', function(frame) {
+    sphere.visible = false;
+    frame.hands.forEach(findRight);
+});
+
+function findRight(hand){
+    if (hand.type === 'right')
+        return displaySphere(hand);
+}
+
+function displaySphere (hand){
+    handMesh = hand.data('riggedHand.mesh');
+    sphere.visible = true;
+    return handMesh.scenePosition(hand.sphereCenter, sphere.position);
+}

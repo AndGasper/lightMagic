@@ -362,7 +362,7 @@ function onReady(handler) {
     pointLight.lookAt(new THREE.Vector3(0, 0, 0));
     this.scene.add(pointLight);
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
-    this.camera.position.fromArray([0, 160, 400]);
+    // this.camera.position.fromArray([0, 160, 400]);
     // added position.z, changed .lookAt params
     this.camera.position.z = 600; // added this line
     this.camera.lookAt(new THREE.Vector3(0, 300, 0)); // changed params from (0,0,0) to (0,300,100)
