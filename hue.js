@@ -219,7 +219,7 @@ function switchCooldown() {
         //temp
         toggleAllLightsOffOn(false);
     } else if (lightSwitchThreshold == upperThreshold) {
-        console.log("True, turn all the ligts on");
+        console.log("True, turn all the lights on");
         setTimeout(function () {
             cooldown = false;
         }, cooldownTimer);
