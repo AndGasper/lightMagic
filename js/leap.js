@@ -1,105 +1,149 @@
-function moveFinger(Finger, posX, posY, posZ) {
-  Finger.style.webkitTransform = "translate3d("+posX+"px, "+posY+"px, "+posZ+"px)";
+window.addEventListener("keypress", userColorChoice);
+
+
+
+let controller = new Leap.Controller();
+
+
+
+let redColor = {'r': 255, 'g': 0, 'b': 0};
+let yellowColor = {'r': 255, 'g': 255, 'b': 0};
+let greenColor = {'r': 0, 'g':255, 'b': 0};
+let blueColor = {'r':0, 'g': 0, 'b': 255};
+let violetColor = {'r': 75, 'g':0, 'b':150};
+let whiteColor = {'r':255, 'g':255, 'b':255};
+
+
+function userColorChoice() {
+    switch(event.keyCode) {
+        case(97):
+            // 97 = a
+            changeColor(11, redColor);
+            changeColor(12, redColor);
+            changeColor(5, redColor);
+            changeColor(16, redColor);
+            changeColor(17, redColor);
+            break;
+        case(115):
+            // 115 = s
+            changeColor(11, yellowColor);
+            changeColor(12, yellowColor);
+            changeColor(5, yellowColor);
+            changeColor(16, yellowColor);
+            changeColor(17, yellowColor);
+
+            break;
+        case(100):
+            // 100 = d
+            changeColor(11, greenColor);
+            changeColor(12, greenColor);
+            changeColor(15, greenColor);
+            changeColor(16, greenColor);
+            changeColor(17, greenColor);
+            break;
+        case(102):
+            // 102 = f
+            changeColor(11, blueColor);
+            changeColor(12, blueColor);
+            changeColor(15, blueColor);
+            changeColor(16, blueColor);
+            changeColor(17, blueColor);
+            break;
+        case(103):
+            // 103 = g
+            changeColor(11, violetColor );
+            changeColor(12, violetColor);
+            changeColor(5, violetColor);
+            changeColor(16, violetColor);
+            changeColor(17, violetColor);
+            break;
+        default:
+            changeColor(11, whiteColor);
+            changeColor(12, whiteColor);
+            changeColor(5, whiteColor);
+            changeColor(16, whiteColor);
+            changeColor(17, whiteColor);
+    };
 }
 
-function moveSphere(Sphere, posX, posY, posZ, rotX, rotY, rotZ) {
-  Sphere.style.webkitTransform = Sphere.style.mozTransform =
-  Sphere.style.transform = "translateX("+posX+"px) translateY("+posY+"px) translateZ("+posZ+"px) rotateX("+rotX+"deg) rotateY(0deg) rotateZ(0deg)";
+// Probably does not really need to be named onBlur, but it does seem to only want a function with no parameters
+// change the color to red
+controller.on('blur', onBlur);
+function onBlur() {
+
+    changeColor(11, redColor);
+    changeColor(12, redColor);
+    changeColor(5, redColor);
+    changeColor(16, redColor);
+    changeColor(17, redColor);
+}
+controller.on('focus', onFocus);
+// On focus toggle the color to blue
+function onFocus() {
+    changeColor(11, blueColor);
+    changeColor(12, blueColor);
+    changeColor(15, blueColor);
+    changeColor(16, blueColor);
+    changeColor(17, blueColor);
 }
 
-var fingers = {};
-var spheres = {};
-Leap.loop(function(frame) {
-  var seenFingers = {};
-  var handIds = {};
-  if (frame.hands === undefined ) {
-    var handsLength = 0
-  } else {
-    var handsLength = frame.hands.length;
-  }
+// let frameArray = []; // Global frame array. Sorry global namespace
+// controller.loop(function(frame) {
+//     if (state == 'paused') return;
+//     if (state == 'pausing') {
+//         state = 'paused';
+//     } else {
+//         if (frame.hands[0] && frame.hands[0].type === 'right') {
+//             frameArray.push(frame.timestamp); // push the current time stamp into the array
+//             // Compare the frames being rendered ~110 fps
+//             if (frameArray[frameArray.length-1] - frameArray[parseInt(frameArray.length/2)] > 100) {
+//                 var x = Math.floor((frame.hands[0].direction[0] + 1) * 128); // x = red
+//                 var z = Math.floor((frame.hands[0].direction[1] + 1) * 128); // z = green
+//                 var y = Math.floor((frame.hands[0].direction[2] + 1) * 128); // y = blue
+//                 var color = 'rgb(' + x + "," + z + "," + y + ')';
+//                 sendColor(color);
+//                 changeColor(11, {"r": x, "g": z, "b": y}); // add a 500 ms delay before changing the color call
+//             }
+//         }
+//         if (haveLoggedFrame == false && frame.hands[0]) {
+//             haveLoggedFrame = true;
+//         }
+//     }
+// });
 
-  for (var handId = 0, handCount = handsLength; handId != handCount; handId++) {
-    var hand = frame.hands[handId];
-    var posX = (hand.palmPosition[0]*3);
-    var posY = (hand.palmPosition[2]*3)-200;
-    var posZ = (hand.palmPosition[1]*3)-400;
-    var rotX = (hand._rotation[2]*90);
-    var rotY = (hand._rotation[1]*90);
-    var rotZ = (hand._rotation[0]*90);
-    var sphere = spheres[hand.id];
-    if (!sphere) {
-      var sphereDiv = document.getElementById("sphere").cloneNode(true);
-      sphereDiv.setAttribute('id',hand.id);
-      sphereDiv.style.backgroundColor='#'+Math.floor(Math.random()*16777215).toString(16);
-      document.getElementById('scene').appendChild(sphereDiv);
-      spheres[hand.id] = hand.id;
-    } else {
-      var sphereDiv =  document.getElementById(hand.id);
-      if (typeof(sphereDiv) != 'undefined' && sphereDiv != null) {
-        moveSphere(sphereDiv, posX, posY, posZ, rotX, rotY, rotZ);
-      }
-    }
-    handIds[hand.id] = true;
-  }
-  for (handId in spheres) {
-    if (!handIds[handId]) {
-      var sphereDiv =  document.getElementById(spheres[handId]);
-      sphereDiv.parentNode.removeChild(sphereDiv);
-      delete spheres[handId];
-    }
-  }
+function calculate_cieXY_from_rgb(R,G,B){
+    const X = 0.4124*R + 0.3576*G + 0.1805*B;
+    const Y = 0.2126*R + 0.7152*G + 0.0722*B;
+    const Z = 0.0193*R + 0.1192*G + 0.9505*B;
+    const x = X / (X + Y + Z);
+    const y = Y / (X + Y + Z);
+    const xy = {
+        x: x,
+        y: y
+    };
+    return(xy);
+}
 
-  for (var pointableId = 0, pointableCount = frame.pointables.length; pointableId != pointableCount; pointableId++) {
-    var pointable = frame.pointables[pointableId];
-    var newFinger = false;
-    if (pointable.finger) {
-      if (!fingers[pointable.id]) {
-        fingers[pointable.id] = [];
-        newFinger = true;
-      }
+function changeColor(lightNumber, color) {
+    const BASE_URL_LIGHTS = `http://${bridgeIPAddress}/api/${hueUsername}/lights`;
+    const {r, g, b} = color; // pull off r, g, and b from color
+    const {x,y} =  calculate_cieXY_from_rgb(r,g,b); // pull off hue saturation and brightness from the HSB return value
 
-      for (var partId = 0, length; partId != 4; partId++) {
-        var posX = (pointable.positions[partId][0]*3);
-        var posY = (pointable.positions[partId][2]*3)-200;
-        var posZ = (pointable.positions[partId][1]*3)-400;
+    // let hueAdjusted = parseInt((hue/360)*65535);
+    // let saturationAdjusted = parseInt(saturation*254);
+    // let brightnessAdjusted = parseInt(brightness*254);
 
-        var id = pointable.id+'_'+partId;
+    $.ajax({
+        url: `${BASE_URL_LIGHTS}/${lightNumber}/state`,
+        method: "PUT",
+        dataType: "JSON",
+        data: JSON.stringify({"xy":[x,y], "transitiontime": 0, "alert": "select"}), // time in milliseconds for the light change to take effect
+        // data: JSON.stringify({"hue": hueAdjusted, "sat": saturationAdjusted, "bri": brightnessAdjusted, "transitiontime": 0}),
+        success: (response) => {
 
-        var finger = fingers[id];
-        if (newFinger) {
-          var fingerDiv = document.getElementById("finger").cloneNode(true);
-          fingerDiv.setAttribute('id', id);
-          fingerDiv.style.backgroundColor='#'+Math.floor(pointable.type*500).toString(16);
-          document.getElementById('scene').appendChild(fingerDiv);
-          fingers[pointable.id].push(id);
-        } else  {
-          var fingerDiv =  document.getElementById(id);
-          if (typeof(fingerDiv) != 'undefined' && fingerDiv != null) {
-            moveFinger(fingerDiv, posX, posY, posZ);
-          }
+        },
+        error: (response) => {
+
         }
-        seenFingers[pointable.id] = true;
-      }
-
-      //var dirX = -(pointable.direction[1]*90);
-      //var dirY = -(pointable.direction[2]*90);
-      //var dirZ = (pointable.direction[0]*90);
-    }
-  }
-  for (var fingerId in fingers) {
-    if (!seenFingers[fingerId]) {
-      var ids = fingers[fingerId];
-      for (var index in ids) {
-        var fingerDiv =  document.getElementById(ids[index]);
-        fingerDiv.parentNode.removeChild(fingerDiv);
-      }
-      delete fingers[fingerId];
-    }
-  }
-  document.getElementById('showHands').addEventListener('mousedown', function() {
-    document.getElementById('app').setAttribute('class','show-hands');
-  }, false);
-  document.getElementById('hideHands').addEventListener('mousedown', function() {
-    document.getElementById('app').setAttribute('class','');
-  }, false);
-});
+    });
+}
