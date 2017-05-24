@@ -1,7 +1,3 @@
-
-
-
-
 var state = 'play';
 window.onkeypress = function(e) {
   if (e.charCode == 32) { //spacebar
@@ -13,29 +9,82 @@ window.onkeypress = function(e) {
   }
 };
 var haveLoggedFrame = false;
-var controller = new Leap.Controller({enableGestures: true});
+var controller = new Leap.Controller({enableGestures: true, loopWhileDisconnected: false});
+
+// Probably does not really need to be named onBlur, but it does seem to only want a function with no parameters
+// change the color to red
+controller.on('blur', onBlur);
+function onBlur() {
+
+    changeColor(11,{'r':255, 'g': 0, 'b': 0});
+}
+controller.on('focus', onFocus);
+// On focus toggle the color to blue
+function onFocus() {
+  changeColor(11,{'r':0, 'g':0, 'b':255});
+}
+
+controller.on('gesture', onGesture);
+
+function onGesture(gesture, frame) {
+  console.log(gesture.type + "w/ID" + gesture.id + "id n frame" + frame.id);
+}
+
+// controller.plugin('holdColor', function() {
+//   return (
+//       color:
+//   )
+// });
+
+// if(frame.hands[0] && frame.hands[0].type === 'right'){
+//     console.log("frame.hands[0].direction[0]+1", frame.hands[0].direction[0]+1);
+//     var x = Math.floor((frame.hands[0].direction[0] + 1) * 128); // x = red
+//     var z = Math.floor ((frame.hands[0].direction[1] + 1) *  128); // z = green
+//     var y = Math.floor((frame.hands[0].direction[2] + 1) *  128); // y = blue
+//     var color = 'rgb(' + x + "," + z + "," + y + ')';
+//     sendColor(color);
+//     changeColor(11, {"r":x, "g": z, "b": y}); // add a 500 ms delay before changing the color call
+//
+// }
+
+
+// function framePositionToColor(frame) {
+//   return function () {
+//
+//       // if(frame.hands[0] && frame.hands[0].type === 'right'){
+// //     console.log("frame.hands[0].direction[0]+1", frame.hands[0].direction[0]+1);
+// //     var x = Math.floor((frame.hands[0].direction[0] + 1) * 128); // x = red
+// //     var z = Math.floor ((frame.hands[0].direction[1] + 1) *  128); // z = green
+// //     var y = Math.floor((frame.hands[0].direction[2] + 1) *  128); // y = blue
+// //     var color = 'rgb(' + x + "," + z + "," + y + ')';
+// //     sendColor(color);
+// //     changeColor(11, {"r":x, "g": z, "b": y}); // add a 500 ms delay before changing the color call
+// //
+// // }
+// };
+
+let frameArray = []; // Global frame array. Sorry global namespace
 controller.loop(function(frame) {
-  if (state == 'paused') return;
-  if (state == 'pausing') {
-    state = 'paused';
-  }else{
-      //  && frame.hands.type === 'right'
-    if(frame.hands[0] && frame.hands[0].type === 'right'){
-        var x = Math.floor((frame.hands[0].direction[0] + 1) * 128); // x = red
-        var z = Math.floor ((frame.hands[0].direction[1] + 1) *  128); // z = green
-        var y = Math.floor((frame.hands[0].direction[2] + 1) *  128); // y = blue
-        var color = 'rgb(' + x + "," + z + "," + y + ')';
-        sendColor(color);
-
-        changeColor(11, {"r":x, "g": z, "b": y}); // add a 500 ms delay before changing the color call
-
+    if (state == 'paused') return;
+    if (state == 'pausing') {
+        state = 'paused';
+    } else {
+        if (frame.hands[0] && frame.hands[0].type === 'right') {
+            frameArray.push(frame.timestamp); // push the current time stamp into the array
+            // Compare the frames being rendered ~110 fps
+            if (frameArray[frameArray.length-1] - frameArray[parseInt(frameArray.length/2)] > 100) {
+                var x = Math.floor((frame.hands[0].direction[0] + 1) * 128); // x = red
+                var z = Math.floor((frame.hands[0].direction[1] + 1) * 128); // z = green
+                var y = Math.floor((frame.hands[0].direction[2] + 1) * 128); // y = blue
+                var color = 'rgb(' + x + "," + z + "," + y + ')';
+                sendColor(color);
+                changeColor(11, {"r": x, "g": z, "b": y}); // add a 500 ms delay before changing the color call
+            }
+        }
+        if (haveLoggedFrame == false && frame.hands[0]) {
+            haveLoggedFrame = true;
+        }
     }
-  }
-
-  if (haveLoggedFrame == false && frame.hands[0]){
-    haveLoggedFrame = true;
-  }
-
 });
 function sendColor(color){
     document.getElementById('box').style.backgroundColor = color;
