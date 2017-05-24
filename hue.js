@@ -101,8 +101,10 @@ var controller = Leap.loop(function (frame) {
             var x = Math.floor((frame.hands[0].direction[0] + 1) * 128);
             var z = Math.floor ((frame.hands[0].direction[1] + 1) *  128);
             var y = Math.floor((frame.hands[0].direction[2] + 1) *  128);
+            var distance = frame.hands[0].sphereCenter[1] + 'px'
             var color = 'rgb(' + x + "," + z + "," + y + ')';
             sendColor(color);
+            changeRadius(distance);
             if (haveLoggedFrame == false && frame.hands[0]){
                 haveLoggedFrame = true;
             }
@@ -113,6 +115,9 @@ var controller = Leap.loop(function (frame) {
 });
 function sendColor(color){
     document.getElementById('box').style.backgroundColor = color;
+}
+function changeRadius(distance){
+    document.getElementById("box").style.borderRadius = distance;
 }
 function getExtendedFingers(hand) {
     var f = 0;
