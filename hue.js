@@ -51,6 +51,12 @@ var pinky = new Finger(17);
 function toggleLightsOffOn(fingerObj) {
     const BASE_URL = `http://${bridgeIPAddress}/api/${hueUsername}/lights/${fingerObj.lightId}/state`;
     const state = $("#onOffCheckbox:checked");
+    if(fingerObj.lightState === true){
+        fingerObj.lightState = false;
+    }
+    else{
+        fingerObj.lightState = true;
+    }
     $.ajax({
         url: `${BASE_URL}`,
         dataType: "JSON",
@@ -61,12 +67,7 @@ function toggleLightsOffOn(fingerObj) {
         error: function (response) {
         }
     });
-    if(fingerObj.lightState === true){
-        fingerObj.lightState = false;
-    }
-    else{
-        fingerObj.lightState = true;
-    }
+
 }
 
 var controller = Leap.loop({
